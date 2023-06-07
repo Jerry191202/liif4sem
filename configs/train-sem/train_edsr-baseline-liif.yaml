@@ -4,7 +4,7 @@ train_dataset:
     args:
       root_path: ./load/sem/train
       repeat: 20
-      cache: bin
+      cache: none
   wrapper:
     name: sr-implicit-downsampled
     args:
@@ -21,7 +21,7 @@ val_dataset:
       root_path: ./load/sem/valid
       first_k: 10
       repeat: 160
-      cache: bin
+      cache: none
   wrapper:
     name: sr-implicit-downsampled
     args:
