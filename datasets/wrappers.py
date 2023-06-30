@@ -59,6 +59,12 @@ class SRImplicitPaired(Dataset):
             crop_lr = augment(crop_lr)
             crop_hr = augment(crop_hr)
 
+        # Add Gaussian noise
+        nsqrt = 10 ** (-3 + np.random.rand())
+        noise = (nsqrt ** 0.5) * torch.randn_like(crop_lr[0])
+        noise = torch.stack((noise, noise, noise), dim=0)
+        crop_lr = torch.clamp(crop_lr + noise, min=0, max=1)
+
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
         if self.sample_q is not None:
