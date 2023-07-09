@@ -111,18 +111,18 @@ def make_coord(shape, ranges=None, flatten=True):
         r = (v1 - v0) / (2 * n)
         seq = v0 + r + (2 * r) * torch.arange(n).float()
         coord_seqs.append(seq)
-    ret = torch.stack(torch.meshgrid(*coord_seqs), dim=-1)
+    ret = torch.stack(torch.meshgrid(*coord_seqs, indexing='ij'), dim=-1)
     if flatten:
         ret = ret.view(-1, ret.shape[-1])
     return ret
 
 
 def to_pixel_samples(img):
-    """ Convert the image to coord-RGB pairs.
-        img: Tensor, (3, H, W)
+    """ Convert the image to coord-grayscale pairs.
+        img: Tensor, (1, H, W)
     """
     coord = make_coord(img.shape[-2:])   # (H*W, 2) xy
-    rgb = img.view(3, -1).permute(1, 0)  # (H*W, 3) rgb
+    rgb = img.view(1, -1).permute(1, 0)  # (H*W, 1) grayscale
     return coord, rgb
 
 

@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    img = transforms.ToTensor()(Image.open(args.input).convert('RGB'))
+    img = transforms.ToTensor()(Image.open(args.input))
 
     model = models.make(torch.load(args.model)['model'], load_sd=True).cuda()
 
@@ -32,5 +32,5 @@ if __name__ == '__main__':
     cell[:, 1] *= 2 / w
     pred = batched_predict(model, ((img - 0.5) / 0.5).cuda().unsqueeze(0),
         coord.unsqueeze(0), cell.unsqueeze(0), bsize=30000)[0]
-    pred = (pred * 0.5 + 0.5).clamp(0, 1).view(h, w, 3).permute(2, 0, 1).cpu()
+    pred = (pred * 0.5 + 0.5).clamp(0, 1).view(h, w, 1).permute(2, 0, 1).cpu()
     transforms.ToPILImage()(pred).save(args.output)

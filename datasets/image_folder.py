@@ -45,14 +45,12 @@ class ImageFolder(Dataset):
                     bin_root, filename.split('.')[0] + '.pkl')
                 if not os.path.exists(bin_file):
                     with open(bin_file, 'wb') as f:
-                        # pickle.dump(imageio.imread(file), f)
-                        pickle.dump(np.array(Image.open(file).convert('RGB')), f)
+                        pickle.dump(imageio.imread(file), f)
                     print('dump', bin_file)
                 self.files.append(bin_file)
 
             elif cache == 'in_memory':
-                self.files.append(transforms.ToTensor()(
-                    Image.open(file).convert('RGB')))
+                self.files.append(transforms.ToTensor()(Image.open(file)))
 
     def __len__(self):
         return len(self.files) * self.repeat
@@ -61,7 +59,7 @@ class ImageFolder(Dataset):
         x = self.files[idx % len(self.files)]
 
         if self.cache == 'none':
-            return transforms.ToTensor()(Image.open(x).convert('RGB'))
+            return transforms.ToTensor()(Image.open(x))
 
         elif self.cache == 'bin':
             with open(x, 'rb') as f:

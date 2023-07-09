@@ -105,8 +105,6 @@ class EDSR(nn.Module):
             self.url = url[url_name]
         else:
             self.url = None
-        self.sub_mean = MeanShift(args.rgb_range)
-        self.add_mean = MeanShift(args.rgb_range, sign=1)
 
         # define head module
         m_head = [conv(args.n_colors, n_feats, kernel_size)]
@@ -179,7 +177,7 @@ def make_edsr_baseline(n_resblocks=16, n_feats=64, res_scale=1,
     args.no_upsampling = no_upsampling
 
     args.rgb_range = rgb_range
-    args.n_colors = 3
+    args.n_colors = 1
     return EDSR(args)
 
 

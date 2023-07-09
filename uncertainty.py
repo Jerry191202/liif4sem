@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    img = transforms.ToTensor()(Image.open(args.input).convert('RGB'))
+    img = transforms.ToTensor()(Image.open(args.input))
     print(img.shape)
 
     model = models.make(torch.load(args.model)['model'], load_sd=True).cuda()
@@ -40,10 +40,10 @@ if __name__ == '__main__':
                                coord.unsqueeze(0),
                                cell.unsqueeze(0),
                                bsize=30000)[0]
-        pred = (pred * 0.5 + 0.5).clamp(0, 1).view(h, w, 3).permute(2, 0,
+        pred = (pred * 0.5 + 0.5).clamp(0, 1).view(h, w, 1).permute(2, 0,
                                                                     1).cpu()
         preds.append(pred.clone().detach())
     preds = torch.stack(preds)
     uncer = preds.var(dim=0)
     print(uncer.shape, uncer.min(), uncer.max())
-    transforms.ToPILImage()(uncer*20000).save(args.output)
+    transforms.ToPILImage()(uncer * 20000).save(args.output)

@@ -138,10 +138,9 @@ class SRImplicitDownsampled(Dataset):
             crop_hr = augment(crop_hr)
 
         # Add Gaussian noise
-        nsqrt = 10 ** (-3 + np.random.rand())
-        noise = (nsqrt ** 0.5) * torch.randn_like(crop_lr[0])
-        noise = torch.stack((noise, noise, noise), dim=0)
-        crop_lr = torch.clamp(crop_lr + noise, min=0, max=1)
+        # nsqrt = 10 ** np.random.uniform(-4, -3)
+        # noise = (nsqrt ** 0.5) * torch.randn_like(crop_lr)
+        # crop_lr = torch.clamp(crop_lr + noise, min=0, max=1)
 
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
