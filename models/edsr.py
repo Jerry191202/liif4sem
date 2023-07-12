@@ -30,7 +30,7 @@ class MeanShift(nn.Conv2d):
 class ResBlock(nn.Module):
     def __init__(
         self, conv, n_feats, kernel_size,
-        bias=True, bn=False, act=nn.ReLU(True), res_scale=1):
+        bias=True, bn=False, dp=True, act=nn.ReLU(True), res_scale=1):
 
         super(ResBlock, self).__init__()
         m = []
@@ -40,6 +40,8 @@ class ResBlock(nn.Module):
                 m.append(nn.BatchNorm2d(n_feats))
             if i == 0:
                 m.append(act)
+                # if dp:
+                #     m.append(nn.Dropout(p=0.2))
 
         self.body = nn.Sequential(*m)
         self.res_scale = res_scale

@@ -45,7 +45,8 @@ class ImageFolder(Dataset):
                     bin_root, filename.split('.')[0] + '.pkl')
                 if not os.path.exists(bin_file):
                     with open(bin_file, 'wb') as f:
-                        pickle.dump(imageio.imread(file), f)
+                        # pickle.dump(imageio.imread(file), f)
+                        pickle.dump(np.array(Image.open(file).convert('RGB')), f)
                     print('dump', bin_file)
                 self.files.append(bin_file)
 
