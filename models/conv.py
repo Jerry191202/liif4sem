@@ -1,4 +1,3 @@
-import math
 from argparse import Namespace
 from torch import nn
 from models import register
@@ -13,34 +12,32 @@ def default_conv(in_channels, out_channels, kernel_size, bias=True):
 
 
 class ConvSeq(nn.Module):
+
     def __init__(self, args, conv=default_conv):
         super().__init__()
         self.args = args
-        n_feats = args.n_feats
+        feats_list = args.feats_list
+        n_colors = args.n_colors
         kernel_size = 3
-        scale = args.scale
 
-        self.head = conv(1, 1, kernel_size)
-        m_body = [
-            nn.Sequential(conv(scale**i, scale**(i + 1), kernel_size),
-                          nn.ReLU())
-            for i in range(round(math.log(n_feats, scale)))
-        ]
+        m_body = []
+        pred = n_colors
+        for i, n_feats in enumerate(feats_list):
+            m_body.append(conv(pred, n_feats, kernel_size))
+            pred = n_feats
+            if i + 1 < len(feats_list):
+                m_body.append(nn.ReLU())
         self.body = nn.Sequential(*m_body)
-        self.tail = conv(n_feats, n_feats, kernel_size)
-        self.out_dim = n_feats
+        self.out_dim = feats_list[-1]
 
     def forward(self, x):
-        x = self.head(x)
         x = self.body(x)
-        x = self.tail(x)
         return x
 
 
 @register('conv-seq')
-def make_conv(n_feats=64, scale=4):
+def make_conv(feats_list):
     args = Namespace()
-    args.n_feats = n_feats
-    args.scale = scale
+    args.feats_list = feats_list
     args.n_colors = 1
     return ConvSeq(args)

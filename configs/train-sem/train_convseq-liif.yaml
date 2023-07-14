@@ -40,8 +40,7 @@ model:
     encoder_spec:
       name: conv-seq
       args:
-        n_feats: 64
-        scale: 8
+        feats_list: [8, 64]
     imnet_spec:
       name: mlp
       args:
