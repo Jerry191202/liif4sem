@@ -40,13 +40,13 @@ model:
     encoder_spec:
       name: edsr-baseline
       args:
-        n_feats: 32
+        n_feats: 64
         no_upsampling: true
     imnet_spec:
       name: mlp
       args:
         out_dim: 3
-        hidden_list: [128, 128, 128, 128]
+        hidden_list: [256, 256, 256, 256]
 
 optimizer:
   name: adam
