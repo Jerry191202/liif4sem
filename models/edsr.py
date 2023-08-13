@@ -30,7 +30,7 @@ class MeanShift(nn.Conv2d):
 class ResBlock(nn.Module):
     def __init__(
         self, conv, n_feats, kernel_size,
-        bias=True, bn=False, dp=True, act=nn.ReLU(True), res_scale=1):
+        bias=True, bn=False, drop_rate=None, act=nn.ReLU(True), res_scale=1):
 
         super(ResBlock, self).__init__()
         m = []
@@ -40,8 +40,8 @@ class ResBlock(nn.Module):
                 m.append(nn.BatchNorm2d(n_feats))
             if i == 0:
                 m.append(act)
-                # if dp:
-                #     m.append(nn.Dropout(p=0.2))
+                if drop_rate is not None:
+                    m.append(nn.Dropout(p=drop_rate))
 
         self.body = nn.Sequential(*m)
         self.res_scale = res_scale
@@ -112,7 +112,8 @@ class EDSR(nn.Module):
         # define body module
         m_body = [
             ResBlock(
-                conv, n_feats, kernel_size, act=act, res_scale=args.res_scale
+                conv, n_feats, kernel_size, act=act, res_scale=args.res_scale,
+                drop_rate=args.drop_rate
             ) for _ in range(n_resblocks)
         ]
         m_body.append(conv(n_feats, n_feats, kernel_size))
@@ -167,7 +168,7 @@ class EDSR(nn.Module):
 
 @register('edsr-baseline')
 def make_edsr_baseline(n_resblocks=16, n_feats=64, res_scale=1,
-                       scale=2, no_upsampling=False, rgb_range=1):
+                       scale=2, no_upsampling=False, rgb_range=1, drop_rate=None):
     args = Namespace()
     args.n_resblocks = n_resblocks
     args.n_feats = n_feats
@@ -175,6 +176,7 @@ def make_edsr_baseline(n_resblocks=16, n_feats=64, res_scale=1,
 
     args.scale = [scale]
     args.no_upsampling = no_upsampling
+    args.drop_rate = drop_rate
 
     args.rgb_range = rgb_range
     args.n_colors = 1

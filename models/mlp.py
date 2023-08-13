@@ -6,14 +6,15 @@ from models import register
 @register('mlp')
 class MLP(nn.Module):
 
-    def __init__(self, in_dim, out_dim, hidden_list):
+    def __init__(self, in_dim, out_dim, hidden_list, drop_rate=None):
         super().__init__()
         layers = []
         lastv = in_dim
         for hidden in hidden_list:
             layers.append(nn.Linear(lastv, hidden))
             layers.append(nn.ReLU())
-            # layers.append(nn.Dropout(0.5))
+            if drop_rate is not None:
+                layers.append(nn.Dropout(drop_rate))
             lastv = hidden
         layers.append(nn.Linear(lastv, out_dim))
         self.layers = nn.Sequential(*layers)

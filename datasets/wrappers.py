@@ -89,7 +89,7 @@ def resize_fn(img, size):
 class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_size=None, scale_min=1, scale_max=None,
-                 augment=False, sample_q=None):
+                 augment=False, sample_q=None, add_noise=False):
         self.dataset = dataset
         self.inp_size = inp_size
         self.scale_min = scale_min
@@ -98,6 +98,7 @@ class SRImplicitDownsampled(Dataset):
         self.scale_max = scale_max
         self.augment = augment
         self.sample_q = sample_q
+        self.add_noise=add_noise
 
     def __len__(self):
         return len(self.dataset)
@@ -137,10 +138,10 @@ class SRImplicitDownsampled(Dataset):
             crop_lr = augment(crop_lr)
             crop_hr = augment(crop_hr)
 
-        # Add Gaussian noise
-        # nsqrt = 10 ** np.random.uniform(-4, -3)
-        # noise = (nsqrt ** 0.5) * torch.randn_like(crop_lr)
-        # crop_lr = torch.clamp(crop_lr + noise, min=0, max=1)
+        if self.add_noise:
+            nsqrt = 10 ** np.random.uniform(-4, -3)
+            noise = (nsqrt ** 0.5) * torch.randn_like(crop_lr)
+            crop_lr = torch.clamp(crop_lr + noise, min=0, max=1)
 
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 

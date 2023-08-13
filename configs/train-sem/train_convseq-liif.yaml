@@ -12,6 +12,7 @@ train_dataset:
       scale_max: 4
       augment: true
       sample_q: 2304
+      add_noise: false
   batch_size: 16
 
 val_dataset:
@@ -28,6 +29,7 @@ val_dataset:
       inp_size: 48
       scale_max: 4
       sample_q: 2304
+      add_noise: false
   batch_size: 16
 
 data_norm:
@@ -40,12 +42,15 @@ model:
     encoder_spec:
       name: conv-seq
       args:
-        feats_list: [64, 64, 64, 64]
+        feats_list: [64, 64, 64, 64, 64, 64]
+        kernel_size: 3
+        drop_rate:
     imnet_spec:
       name: mlp
       args:
         out_dim: 1
         hidden_list: [256, 256, 256, 256]
+        drop_rate:
 
 optimizer:
   name: adam

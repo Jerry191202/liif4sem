@@ -1,0 +1,77 @@
+train_dataset:
+  dataset:
+    name: image-folder
+    args:
+      root_path: ./load/sem2/train
+      repeat: 20
+      cache: in_memory
+  wrapper:
+    name: sr-implicit-downsampled
+    args:
+      inp_size: 48
+      scale_max: 4
+      augment: true
+      sample_q: 2304
+      add_noise: false
+  batch_size: 16
+val_dataset:
+  dataset:
+    name: image-folder
+    args:
+      root_path: ./load/sem2/valid
+      first_k: 10
+      repeat: 160
+      cache: in_memory
+  wrapper:
+    name: sr-implicit-downsampled
+    args:
+      inp_size: 48
+      scale_max: 4
+      sample_q: 2304
+      add_noise: false
+  batch_size: 16
+data_norm:
+  inp:
+    sub:
+    - 0.5
+    div:
+    - 0.5
+  gt:
+    sub:
+    - 0.5
+    div:
+    - 0.5
+model:
+  name: liif
+  args:
+    encoder_spec:
+      name: conv-seq
+      args:
+        feats_list:
+        - 64
+        - 64
+        drop_rate: null
+    imnet_spec:
+      name: mlp
+      args:
+        out_dim: 1
+        hidden_list:
+        - 256
+        - 256
+        - 256
+        - 256
+        drop_rate: null
+optimizer:
+  name: adam
+  args:
+    lr: 0.0001
+epoch_max: 5
+multi_step_lr:
+  milestones:
+  - 40
+  - 80
+  - 120
+  - 160
+  gamma: 0.5
+epoch_val: 1
+epoch_save: 100
