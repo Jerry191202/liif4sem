@@ -12,7 +12,7 @@ train_dataset:
       scale_max: 4
       augment: true
       sample_q: 2304
-      add_noise: false
+      add_noise: true
   batch_size: 16
 val_dataset:
   dataset:
@@ -28,7 +28,7 @@ val_dataset:
       inp_size: 48
       scale_max: 4
       sample_q: 2304
-      add_noise: false
+      add_noise: true
   batch_size: 16
 data_norm:
   inp:
@@ -55,7 +55,7 @@ model:
         - 64
         - 64
         kernel_size: 3
-        drop_rate: 0.2
+        drop_rate: null
     imnet_spec:
       name: mlp
       args:
