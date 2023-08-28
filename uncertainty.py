@@ -46,4 +46,4 @@ if __name__ == '__main__':
     preds = torch.stack(preds)
     uncer = preds.var(dim=0)
     print(uncer.shape, uncer.min(), uncer.max())
-    transforms.ToPILImage()(uncer * 20000).save(args.output)
+    transforms.ToPILImage()(uncer / uncer.max() * 10).save(args.output)
